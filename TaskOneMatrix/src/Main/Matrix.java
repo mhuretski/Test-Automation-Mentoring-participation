@@ -1,4 +1,4 @@
-package Application;
+package Main;
 
 import Methods.Actions;
 
