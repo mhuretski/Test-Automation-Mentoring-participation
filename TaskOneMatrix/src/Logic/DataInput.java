@@ -1,8 +1,8 @@
-package Methods;
+package Logic;
 
 import java.util.Scanner;
 
-class InputLogic extends Show {
+class DataInput extends Show {
 
     private String chooseMethodMessage;
 

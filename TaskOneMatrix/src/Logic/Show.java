@@ -1,4 +1,4 @@
-package Methods;
+package Logic;
 
 class Show extends Creation {
 

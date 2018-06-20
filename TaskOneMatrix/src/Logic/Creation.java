@@ -1,4 +1,4 @@
-package Methods;
+package Logic;
 
 import java.util.Scanner;
 

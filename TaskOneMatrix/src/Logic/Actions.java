@@ -1,11 +1,11 @@
-package Methods;
+package Logic;
 
 import Interface.MatrixMethods;
 import Transformation.*;
 
 import java.util.Scanner;
 
-public class Actions extends InputLogic implements MatrixMethods {
+public class Actions extends DataInput implements MatrixMethods {
 
     private String listOfCommandsMessage;
     private String helpMessage;

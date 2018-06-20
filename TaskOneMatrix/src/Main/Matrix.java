@@ -1,6 +1,6 @@
 package Main;
 
-import Methods.Actions;
+import Logic.Actions;
 
 import java.util.Scanner;
 
