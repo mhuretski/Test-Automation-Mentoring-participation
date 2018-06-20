@@ -1,4 +1,4 @@
-package Methods.Transformation;
+package Transformation;
 
 import org.jetbrains.annotations.NotNull;
 import java.text.DecimalFormat;

@@ -1,7 +1,7 @@
 package Methods;
 
 import Interface.MatrixMethods;
-import Methods.Transformation.*;
+import Transformation.*;
 
 import java.util.Scanner;
 
