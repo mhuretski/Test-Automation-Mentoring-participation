@@ -1,4 +1,4 @@
-# Task 2: Matrix
+# Task 1.2: Matrix
 # 1) Transpose a matrix
 # 2) Turn a matrix on 90 degrees clockwise
 # 3) Multiply matrices

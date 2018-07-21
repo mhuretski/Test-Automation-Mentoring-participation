@@ -2,7 +2,7 @@ package Transformation;
 
 import org.jetbrains.annotations.NotNull;
 
-abstract class DeterminantInverseLogic {
+class DeterminantInverseLogic {
 
     int numberOfRowChanges;
 
