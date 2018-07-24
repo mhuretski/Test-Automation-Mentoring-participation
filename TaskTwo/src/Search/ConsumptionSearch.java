@@ -10,8 +10,7 @@ public class ConsumptionSearch {
 
     List<Car> fuelConsumptionRange(List<Car> cars, Scanner scanner) {
         List<Car> chosenCars;
-        String description = "\n" +
-                "Type \"lower\" or \"higher\" to choose cars by fuel consumption" +
+        String description = "Type \"lower\" or \"higher\" to choose cars by fuel consumption" +
                 "\n\"all\" to choose all \n\"quit\" to exit.";
         System.out.println(description);
         label:
@@ -31,6 +30,7 @@ public class ConsumptionSearch {
                     System.out.println("Bye!");
                     System.exit(0);
                 default:
+                    System.out.println("Incorrect input: \"" + whatToDo + "\"");
                     System.out.println(description);
                     break;
             }
@@ -42,12 +42,17 @@ public class ConsumptionSearch {
         System.out.println("Type maximum fuel consumption in litres:");
         List<Car> chosenCars = new ArrayList<>();
         String userInput = scanner.nextLine();
-        if (userInput.matches("[0-9]+")) {
+        if (!userInput.contains(",")
+                && (userInput.matches("[0-9]+")
+                || userInput.matches("[0-9]+" + "." + "[0-9]+"))) {
             for (Car car : cars) {
-                if (car.getFuelConsumption() < Integer.valueOf(userInput))
+                if (car.getFuelConsumption() < Double.valueOf(userInput))
                     chosenCars.add(car);
             }
-        } else chosenCars = fuelConsumptionRange(cars, scanner);
+        } else {
+            System.out.println("Incorrect input: " + userInput);
+            chosenCars = lowConsumption(cars, scanner);
+        }
         return chosenCars;
     }
 
@@ -55,12 +60,17 @@ public class ConsumptionSearch {
         System.out.println("Type minimum fuel consumption in litres:");
         List<Car> chosenCars = new ArrayList<>();
         String userInput = scanner.nextLine();
-        if (userInput.matches("[0-9]+")) {
+        if (!userInput.contains(",")
+                && (userInput.matches("[0-9]+")
+                || userInput.matches("[0-9]+" + "." + "[0-9]+"))) {
             for (Car car : cars) {
-                if (car.getFuelConsumption() > Integer.valueOf(userInput))
+                if (car.getFuelConsumption() > Double.valueOf(userInput))
                     chosenCars.add(car);
             }
-        } else chosenCars = fuelConsumptionRange(cars, scanner);
+        } else {
+            System.out.println("Incorrect input: \"" + userInput + "\"");
+            chosenCars = highConsumption(cars, scanner);
+        }
         return chosenCars;
     }
 }

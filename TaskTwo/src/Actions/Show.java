@@ -24,6 +24,7 @@ public class Show {
                 case "skip":
                     break label;
                 default:
+                    System.out.println("Incorrect input: \"" + whatToDo + "\"");
                     System.out.println("Type \"show\" or \"skip\"");
                     break;
             }

@@ -13,8 +13,7 @@ public class TypeSearch {
 
     List<Car> chooseCarBody(List<Car> cars, Scanner scanner) {
         List<Car> chosenCars = new ArrayList<>();
-        System.out.println("\n" +
-                "Type car body to choose cars: " + Arrays.toString(CarBody.values()) +
+        System.out.println("Type car body to choose cars: " + Arrays.toString(CarBody.values()) +
                 "\n\"all\" to choose all bodies\n\"quit\" to exit.");
         String userInput = scanner.nextLine();
         if (checkCarBody(userInput)) {
@@ -30,6 +29,7 @@ public class TypeSearch {
                 chosenCars = cars;
                 break;
             default:
+                System.out.println("Incorrect input: \"" + userInput + "\"");
                 chosenCars = chooseCarBody(cars, scanner);
                 break;
         }
@@ -54,6 +54,7 @@ public class TypeSearch {
                 chosenCars = cars;
                 break;
             default:
+                System.out.println("Incorrect input: \"" + userInput + "\"");
                 chosenCars = chooseBrand(cars, scanner);
                 break;
         }

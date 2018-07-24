@@ -10,8 +10,7 @@ public class PriceSearch {
 
     List<Car> priceRange(List<Car> cars, Scanner scanner) {
         List<Car> chosenCars;
-        String description = "\n" +
-                "Type \"lower\" or \"higher\" to choose cars by price" +
+        String description = "Type \"lower\" or \"higher\" to choose cars by price" +
                 "\n\"all\" to choose all \n\"quit\" to exit.";
         System.out.println(description);
         label:
@@ -47,7 +46,10 @@ public class PriceSearch {
                 if (car.getPrice() < Integer.valueOf(userInput))
                     chosenCars.add(car);
             }
-        } else chosenCars = lowPrices(cars, scanner);
+        } else {
+            System.out.println("Incorrect input: \"" + userInput + "\"");
+            chosenCars = lowPrices(cars, scanner);
+        }
         return chosenCars;
     }
 
@@ -60,7 +62,10 @@ public class PriceSearch {
                 if (car.getPrice() > Integer.valueOf(userInput))
                     chosenCars.add(car);
             }
-        } else chosenCars = highPrices(cars, scanner);
+        } else {
+            System.out.println("Incorrect input: \"" + userInput + "\"");
+            chosenCars = highPrices(cars, scanner);
+        }
         return chosenCars;
     }
 }
