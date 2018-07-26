@@ -16,6 +16,13 @@ public class Car extends Generator {
                 Generator.randPrice());
     }
 
+    public Car(String price){
+        setCar(Generator.random(Brand.values()),
+                Generator.random(CarBody.values()),
+                Generator.randFuelConsumption(),
+                Integer.valueOf(price));
+    }
+
     private void setCar(Brand brand, CarBody carBody, double fuelConsumption, int price) {
         this.brand = brand;
         this.carBody = carBody;

@@ -1,5 +1,6 @@
 package Search;
 
+import Exceptions.ExceptionsHandler;
 import Garage.Car;
 
 import java.util.ArrayList;
@@ -8,7 +9,7 @@ import java.util.Scanner;
 
 public class PriceSearch {
 
-    List<Car> priceRange(List<Car> cars, Scanner scanner) {
+    List<Car> priceRange(ExceptionsHandler ex, List<Car> cars, Scanner scanner) {
         List<Car> chosenCars;
         String description = "Type \"lower\" or \"higher\" to choose cars by price" +
                 "\n\"all\" to choose all \n\"quit\" to exit.";
@@ -18,10 +19,10 @@ public class PriceSearch {
             String whatToDo = scanner.nextLine().toLowerCase();
             switch (whatToDo) {
                 case "lower":
-                    chosenCars = lowPrices(cars, scanner);
+                    chosenCars = lowPrices(ex, cars, scanner);
                     break label;
                 case "higher":
-                    chosenCars = highPrices(cars, scanner);
+                    chosenCars = highPrices(ex, cars, scanner);
                     break label;
                 case "all":
                     chosenCars = cars;
@@ -37,34 +38,34 @@ public class PriceSearch {
         return chosenCars;
     }
 
-    private List<Car> lowPrices(List<Car> cars, Scanner scanner) {
+    public List<Car> lowPrices(ExceptionsHandler ex, List<Car> cars, Scanner scanner) {
         System.out.println("Type maximum price:");
         List<Car> chosenCars = new ArrayList<>();
         String userInput = scanner.nextLine();
-        if (userInput.matches("[0-9]+")) {
+        try {
             for (Car car : cars) {
                 if (car.getPrice() < Integer.valueOf(userInput))
                     chosenCars.add(car);
             }
-        } else {
-            System.out.println("Incorrect input: \"" + userInput + "\"");
-            chosenCars = lowPrices(cars, scanner);
+        } catch (NumberFormatException e) {
+            chosenCars = ex.catchNumFormatExDuringUserInput(ex, cars, scanner, userInput,
+                    true, true);
         }
         return chosenCars;
     }
 
-    private List<Car> highPrices(List<Car> cars, Scanner scanner) {
-        System.out.println("Type minimum price:");
+    public List<Car> highPrices(ExceptionsHandler ex, List<Car> cars, Scanner scanner) {
+        System.out.println("Type maximum price:");
         List<Car> chosenCars = new ArrayList<>();
         String userInput = scanner.nextLine();
-        if (userInput.matches("[0-9]+")) {
+        try {
             for (Car car : cars) {
                 if (car.getPrice() > Integer.valueOf(userInput))
                     chosenCars.add(car);
             }
-        } else {
-            System.out.println("Incorrect input: \"" + userInput + "\"");
-            chosenCars = highPrices(cars, scanner);
+        } catch (NumberFormatException e) {
+            chosenCars = ex.catchNumFormatExDuringUserInput(ex, cars, scanner, userInput,
+                    true, false);
         }
         return chosenCars;
     }

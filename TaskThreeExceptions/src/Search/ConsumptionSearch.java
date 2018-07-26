@@ -1,5 +1,6 @@
 package Search;
 
+import Exceptions.ExceptionsHandler;
 import Garage.Car;
 
 import java.util.ArrayList;
@@ -8,7 +9,7 @@ import java.util.Scanner;
 
 public class ConsumptionSearch {
 
-    List<Car> fuelConsumptionRange(List<Car> cars, Scanner scanner) {
+    List<Car> fuelConsumptionRange(ExceptionsHandler ex, List<Car> cars, Scanner scanner) {
         List<Car> chosenCars;
         String description = "Type \"lower\" or \"higher\" to choose cars by fuel consumption" +
                 "\n\"all\" to choose all \n\"quit\" to exit.";
@@ -18,10 +19,10 @@ public class ConsumptionSearch {
             String whatToDo = scanner.nextLine().toLowerCase();
             switch (whatToDo) {
                 case "lower":
-                    chosenCars = lowConsumption(cars, scanner);
+                    chosenCars = lowConsumption(ex, cars, scanner);
                     break label;
                 case "higher":
-                    chosenCars = highConsumption(cars, scanner);
+                    chosenCars = highConsumption(ex, cars, scanner);
                     break label;
                 case "all":
                     chosenCars = cars;
@@ -38,38 +39,34 @@ public class ConsumptionSearch {
         return chosenCars;
     }
 
-    private List<Car> lowConsumption(List<Car> cars, Scanner scanner) {
+    public List<Car> lowConsumption(ExceptionsHandler ex, List<Car> cars, Scanner scanner) {
         System.out.println("Type maximum fuel consumption in litres:");
         List<Car> chosenCars = new ArrayList<>();
         String userInput = scanner.nextLine();
-        if (!userInput.contains(",")
-                && (userInput.matches("[0-9]+")
-                || userInput.matches("[0-9]+" + "." + "[0-9]+"))) {
+        try {
             for (Car car : cars) {
                 if (car.getFuelConsumption() < Double.valueOf(userInput))
                     chosenCars.add(car);
             }
-        } else {
-            System.out.println("Incorrect input: " + userInput);
-            chosenCars = lowConsumption(cars, scanner);
+        } catch (NumberFormatException e) {
+            chosenCars = ex.catchNumFormatExDuringUserInput(ex, cars, scanner, userInput,
+                    false, true);
         }
         return chosenCars;
     }
 
-    private List<Car> highConsumption(List<Car> cars, Scanner scanner) {
-        System.out.println("Type minimum fuel consumption in litres:");
+    public List<Car> highConsumption(ExceptionsHandler ex, List<Car> cars, Scanner scanner) {
+        System.out.println("Type maximum fuel consumption in litres:");
         List<Car> chosenCars = new ArrayList<>();
         String userInput = scanner.nextLine();
-        if (!userInput.contains(",")
-                && (userInput.matches("[0-9]+")
-                || userInput.matches("[0-9]+" + "." + "[0-9]+"))) {
+        try {
             for (Car car : cars) {
                 if (car.getFuelConsumption() > Double.valueOf(userInput))
                     chosenCars.add(car);
             }
-        } else {
-            System.out.println("Incorrect input: \"" + userInput + "\"");
-            chosenCars = highConsumption(cars, scanner);
+        } catch (NumberFormatException e) {
+            chosenCars = ex.catchNumFormatExDuringUserInput(ex, cars, scanner, userInput,
+                    false, false);
         }
         return chosenCars;
     }

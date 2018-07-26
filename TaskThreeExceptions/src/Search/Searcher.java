@@ -1,6 +1,7 @@
 package Search;
 
 import Actions.Show;
+import Exceptions.ExceptionsHandler;
 import Garage.Car;
 
 import java.util.List;
@@ -10,19 +11,19 @@ public class Searcher {
 
     private List<Car> chosenCars;
 
-    public Searcher(List<Car> cars, Scanner scanner) {
+    public Searcher(ExceptionsHandler ex, List<Car> cars, Scanner scanner) {
         TypeSearch ts = new TypeSearch();
         Show s = new Show();
-        chosenCars = ts.chooseBrand(cars, scanner);
+        chosenCars = ts.chooseBrand(ex, cars, scanner);
         amountOfCars();
         s.whatToDo(chosenCars, scanner);
-        chosenCars = ts.chooseCarBody(chosenCars, scanner);
+        chosenCars = ts.chooseCarBody(ex, chosenCars, scanner);
         amountOfCars();
         s.whatToDo(chosenCars, scanner);
-        chosenCars = new ConsumptionSearch().fuelConsumptionRange(chosenCars, scanner);
+        chosenCars = new ConsumptionSearch().fuelConsumptionRange(ex, chosenCars, scanner);
         amountOfCars();
         s.whatToDo(chosenCars, scanner);
-        chosenCars = new PriceSearch().priceRange(chosenCars, scanner);
+        chosenCars = new PriceSearch().priceRange(ex, chosenCars, scanner);
         amountOfCars();
 
     }
