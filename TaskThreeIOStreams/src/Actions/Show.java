@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Show {
-    public Show(List<Car> cars, Scanner scanner) {
+    Show(List<Car> cars, Scanner scanner) {
         whatToDo(cars, scanner);
     }
 

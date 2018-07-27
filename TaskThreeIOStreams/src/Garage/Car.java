@@ -16,6 +16,10 @@ public class Car extends Generator {
                 Generator.randPrice());
     }
 
+    public Car(Brand brand, CarBody carBody, double fuelConsumption, int price) {
+        setCar(brand, carBody, fuelConsumption, price);
+    }
+
     private void setCar(Brand brand, CarBody carBody, double fuelConsumption, int price) {
         this.brand = brand;
         this.carBody = carBody;

@@ -16,15 +16,16 @@ public class CarExporter {
     }
 
     private void execute() {
-        try {
-            PrintWriter writer = new PrintWriter(
-                    new BufferedWriter(
-                            new OutputStreamWriter(
-                                    new FileOutputStream("src/cars.txt", true),
-                                    StandardCharsets.UTF_8)));
+        String path = "src/cars.txt";
+        try (PrintWriter writer = new PrintWriter(
+                new BufferedWriter(
+                        new OutputStreamWriter(
+                                new FileOutputStream(path, true),
+                                StandardCharsets.UTF_8)))) {
             for (Car car : cars) {
                 writer.append(car.toString()).println();
             }
+            System.out.println(cars.size() + " cars are added to " + path);
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();
