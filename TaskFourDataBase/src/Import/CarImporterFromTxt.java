@@ -15,7 +15,7 @@ class CarImporterFromTxt {
     private int lineNumber = 0;
     private String fileName = "src/cars.txt";
 
-    CarImporterFromTxt(List<Car> cars){
+    CarImporterFromTxt(List<Car> cars) {
         reader(cars);
     }
 
@@ -44,26 +44,28 @@ class CarImporterFromTxt {
     }
 
     private Brand getBrand(String line) {
+        String brandValue = line.substring(1, line.length());
         for (Brand brand : Brand.values()) {
-            if (line.contains(String.valueOf(brand))) {
+            if (brandValue.equals(String.valueOf(brand))) {
                 return brand;
             }
         }
         System.err.println("In " + fileName + " at line " + lineNumber
-                + " car doesn't have valid brand: " + line
+                + " car doesn't have valid brand: " + brandValue
                 + ".\nCheck input file.");
         System.exit(1);
         return null;
     }
 
     private CarBody getCarBody(String line) {
+        String carBodyValue = line.substring(0, line.length());
         for (CarBody carBody : CarBody.values()) {
-            if (line.contains(String.valueOf(carBody))) {
+            if (carBodyValue.equals(String.valueOf(carBody))) {
                 return carBody;
             }
         }
         System.err.println("In " + fileName + " at line " + lineNumber
-                + " car doesn't have valid car body: " + line
+                + " car doesn't have valid car body: " + carBodyValue
                 + ".\nCheck input file.");
         System.exit(1);
         return null;
