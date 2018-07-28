@@ -1,4 +1,4 @@
-package Import;
+package Import.Txt;
 
 import Garage.Brand;
 import Garage.Car;
@@ -10,12 +10,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 
-class CarImporterFromTxt {
+public class CarImporterFromTxt implements DataGetterTxt {
 
     private int lineNumber = 0;
     private String fileName = "src/cars.txt";
 
-    CarImporterFromTxt(List<Car> cars) {
+    public CarImporterFromTxt(List<Car> cars) {
         reader(cars);
     }
 
@@ -43,7 +43,7 @@ class CarImporterFromTxt {
         }
     }
 
-    private Brand getBrand(String line) {
+    public Brand getBrand(String line) {
         String brandValue = line.substring(1, line.length());
         for (Brand brand : Brand.values()) {
             if (brandValue.equals(String.valueOf(brand))) {
@@ -57,7 +57,7 @@ class CarImporterFromTxt {
         return null;
     }
 
-    private CarBody getCarBody(String line) {
+    public CarBody getCarBody(String line) {
         String carBodyValue = line.substring(0, line.length());
         for (CarBody carBody : CarBody.values()) {
             if (carBodyValue.equals(String.valueOf(carBody))) {
@@ -71,7 +71,7 @@ class CarImporterFromTxt {
         return null;
     }
 
-    private double getFuelConsumption(String line) {
+    public double getFuelConsumption(String line) {
         try {
             String fuelCons = line.substring(0, line.indexOf(" "));
             if (fuelCons.matches("[0-9]+")
@@ -87,7 +87,7 @@ class CarImporterFromTxt {
         return -1.0;
     }
 
-    private int getPrice(String line) {
+    public int getPrice(String line) {
         try {
             return Integer.valueOf(line.substring(line.indexOf("$") + 1, line.indexOf("]")));
         } catch (NumberFormatException e) {

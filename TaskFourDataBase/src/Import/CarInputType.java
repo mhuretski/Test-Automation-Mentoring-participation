@@ -2,6 +2,8 @@ package Import;
 
 import Actions.CarGenerator;
 import Garage.Car;
+import Import.DataBase.DataBaseImporter;
+import Import.Txt.CarImporterFromTxt;
 
 import java.util.List;
 import java.util.Scanner;
@@ -15,7 +17,8 @@ public class CarInputType {
     private void whatToDo(List<Car> cars, int amountOfCarsToGenerate, Scanner scanner) {
         System.out.println("In order to get cars type:\n" +
                 "1. \"generate\" to generate cars\n" +
-                "2. \"file\" to get cars from file");
+                "2. \"file\" to get cars from file\n" +
+                "3. \"database\" to get cars from database");
         label:
         while (true) {
             String whatToDo = scanner.nextLine();
@@ -26,9 +29,12 @@ public class CarInputType {
                 case "file":
                     new CarImporterFromTxt(cars);
                     break label;
+                case "database":
+                    new DataBaseImporter(cars, scanner, amountOfCarsToGenerate);
+                    break label;
                 default:
                     System.out.println("Incorrect input: \"" + whatToDo + "\"");
-                    System.out.println("Type \"generate\" or \"file\"");
+                    System.out.println("Type \"generate\" or \"file\" or \"database\"");
                     break;
             }
         }
