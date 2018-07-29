@@ -1,0 +1,24 @@
+{
+	"cars": [{
+			"brand": "BMW",
+			"car_body": "Sedan",
+			"fuel_consumption": 13.4,
+			"price": 14300
+		},{
+			"brand": "AUDI",
+			"car_body": "Van",
+			"fuel_consumption": 10.7,
+			"price": 12600
+		},{
+			"brand": "MERCEDES",
+			"car_body": "Sedan",
+			"fuel_consumption": 12.9,
+			"price": 19900
+		},{
+			"brand": "AUDI",
+			"car_body": "Wagon",
+			"fuel_consumption": 11.1,
+			"price": 14700
+		}
+	]
+}

@@ -46,8 +46,12 @@ public class DataBaseLogic implements DataGetterFromNumbers {
         } catch (SQLException e) {
             System.err.println("Failed to count all cars: " + e.getMessage());
             System.err.println("Please try other options");
-            noErrorsGettingAmountOfRows = false;
+            noErrorsGettingAmountOfRows = false; /*tracking error*/
         } finally {
+            /*final block is executed anyway so first closing set and statement
+             * than providing user other options to get data because if user
+             * interactions will stay at catch block, set and statement
+             * won't be closed until new CarInputType worked out*/
             closeSetAndStatement();
             if (!noErrorsGettingAmountOfRows)
                 new CarInputType(cars, scanner, amountOfCarsToGenerate);
@@ -70,8 +74,12 @@ public class DataBaseLogic implements DataGetterFromNumbers {
         } catch (SQLException e) {
             System.err.println("Error during reading table at line " + id + ": " + e.getMessage());
             System.err.println("Please try other options");
-            noErrorsReadingInfo = false;
+            noErrorsReadingInfo = false; /*tracking error*/
         } finally {
+            /*final block is executed anyway so first closing set and statement
+             * than providing user other options to get data because if user
+             * interactions will stay at catch block, set and statement
+             * won't be closed until new CarInputType worked out*/
             closeSetAndStatement();
             if (!noErrorsReadingInfo) {
                 new CarInputType(cars, scanner, amountOfCarsToGenerate);

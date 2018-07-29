@@ -19,9 +19,10 @@ public class DataBaseImporter {
 
     public DataBaseImporter(List<Car> cars, Scanner scanner, int amountOfCarsToGenerate) {
         connect();
-        if (noErrors)
+        if (noErrors) /*if there are no errors proceed to getting data from DB*/
             getCars(new DataBaseLogic(connection), cars, scanner, amountOfCarsToGenerate);
-        disconnect();
+        disconnect(); /*data is gotten, so error during closing doesn't affect it*/
+        /*give user other options if there are errors during getting data from DB*/
         if (!noErrors) new CarInputType(cars, scanner, amountOfCarsToGenerate);
     }
 
@@ -34,7 +35,7 @@ public class DataBaseImporter {
         } catch (SQLException e) {
             System.err.println("No connection to database: " + e.getMessage());
             System.err.println("Please try other options");
-            noErrors = false;
+            noErrors = false; /*if exception occurs track it to choose other options*/
         }
     }
 
@@ -50,11 +51,11 @@ public class DataBaseImporter {
             for (Car car : tempCars) {
                 if (car == null) throw new NullPointerException();
             }
-            cars.addAll(tempCars);
+            cars.addAll(tempCars); /*data is added to main list only if there are no errors*/
         } catch (NullPointerException e) {
             System.err.println("Cars in database contain null values.");
             System.err.println("Please try other options");
-            noErrors = false;
+            noErrors = false; /*if exception occurs track it to choose other options*/
         }
     }
 
