@@ -4,11 +4,14 @@ package Import.DataBase;
 import Garage.Brand;
 import Garage.Car;
 import Garage.CarBody;
+import Import.CarInputType;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Scanner;
 
 /* Table used to get cars:
 CREATE TABLE 'garage'.'cars' (
@@ -20,17 +23,19 @@ CREATE TABLE 'garage'.'cars' (
 PRIMARY KEY('id'));
 */
 
-public class DataBaseLogic implements DataGetterDB {
+public class DataBaseLogic implements DataGetterFromNumbers {
 
     private Connection connection;
     private PreparedStatement statement;
     private ResultSet resultSet;
+    private boolean noErrorsGettingAmountOfRows = true;
+    private boolean noErrorsReadingInfo = true;
 
     DataBaseLogic(Connection connection) {
         this.connection = connection;
     }
 
-    public int getAmountOfAllLinesInTable() {
+    public int getAmountOfAllLinesInTable(List<Car> cars, Scanner scanner, int amountOfCarsToGenerate) {
         int size = 0;
         try {
             statement = connection.prepareStatement("SELECT * from cars;");
@@ -39,56 +44,53 @@ public class DataBaseLogic implements DataGetterDB {
                 size++;
             }
         } catch (SQLException e) {
-            System.err.println(e.getMessage());
-        }
-        finally {
-            try {
-                if (resultSet != null)
-                    resultSet.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-            }
-            try {
-                if (statement != null)
-                    statement.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-            }
+            System.err.println("Failed to count all cars: " + e.getMessage());
+            System.err.println("Please try other options");
+            noErrorsGettingAmountOfRows = false;
+        } finally {
+            closeSetAndStatement();
+            if (!noErrorsGettingAmountOfRows)
+                new CarInputType(cars, scanner, amountOfCarsToGenerate);
         }
         return size;
     }
 
-    public Car readInfo(int id) {
+    public Car readInfo(int id, List<Car> cars, Scanner scanner, int amountOfCarsToGenerate) {
+        Car car = null;
         try {
             statement = connection.prepareStatement("SELECT * from cars where id=?;");
             statement.setInt(1, id);
-
             resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                if (resultSet.getInt("ID") == id) {
-                    return new Car(getBrand(resultSet.getString("BRAND")),
-                            getCarBody(resultSet.getString("CAR_BODY")),
-                            getFuelConsumption(resultSet.getDouble("FUEL_CONSUMPTION")),
-                            getPrice(resultSet.getInt("PRICE")));
-                }
+            if (resultSet.next() && resultSet.getInt("ID") == id) {
+                car = new Car(getBrand(resultSet.getString("BRAND")),
+                        getCarBody(resultSet.getString("CAR_BODY")),
+                        getFuelConsumption(resultSet.getDouble("FUEL_CONSUMPTION")),
+                        getPrice(resultSet.getInt("PRICE")));
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.err.println("Error during reading table at line " + id + ": " + e.getMessage());
+            System.err.println("Please try other options");
+            noErrorsReadingInfo = false;
         } finally {
-            try {
-                if (resultSet != null)
-                    resultSet.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-            }
-            try {
-                if (statement != null)
-                    statement.close();
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
+            closeSetAndStatement();
+            if (!noErrorsReadingInfo) {
+                new CarInputType(cars, scanner, amountOfCarsToGenerate);
             }
         }
-        return null;
+        return car;
+    }
+
+    private void closeSetAndStatement() {
+        try {
+            if (resultSet != null) resultSet.close();
+        } catch (SQLException e) {
+            System.err.println("Error during closing ResultSet " + e.getMessage());
+        }
+        try {
+            if (statement != null) statement.close();
+        } catch (SQLException e) {
+            System.err.println("Error during closing PreparedStatement " + e.getMessage());
+        }
     }
 
     @Override
@@ -110,4 +112,5 @@ public class DataBaseLogic implements DataGetterDB {
     public CarBody getCarBody(String data) {
         return CarBody.valueOf(data);
     }
+
 }

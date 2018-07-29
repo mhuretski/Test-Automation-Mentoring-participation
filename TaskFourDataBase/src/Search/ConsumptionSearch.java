@@ -73,4 +73,5 @@ public class ConsumptionSearch {
         }
         return chosenCars;
     }
+
 }

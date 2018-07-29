@@ -3,26 +3,32 @@ package Import.Txt;
 import Garage.Brand;
 import Garage.Car;
 import Garage.CarBody;
+import Import.CarInputType;
+import Import.DataGetterFromStrings;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
-public class CarImporterFromTxt implements DataGetterTxt {
+public class CarImporterFromTxt implements DataGetterFromStrings {
 
     private int lineNumber = 0;
     private String fileName = "src/cars.txt";
+    private boolean noErrors = true;
 
-    public CarImporterFromTxt(List<Car> cars) {
-        reader(cars);
+    public CarImporterFromTxt(List<Car> cars, Scanner scanner, int amountOfCarsToGenerate) {
+        reader(cars, scanner, amountOfCarsToGenerate);
     }
 
-    private void reader(List<Car> cars) {
+    private void reader(List<Car> cars, Scanner scanner, int amountOfCarsToGenerate) {
         try (BufferedReader br = new BufferedReader(
                 new InputStreamReader(
                         new FileInputStream(fileName)))) {
+            List<Car> tempCars = new ArrayList<>();
             String line;
             while ((line = br.readLine()) != null) {
                 lineNumber++;
@@ -35,12 +41,20 @@ public class CarImporterFromTxt implements DataGetterTxt {
                         carBody != null &&
                         fuelConsumption != -1.0 &&
                         price != -1) {
-                    cars.add(new Car(brand, carBody, fuelConsumption, price));
+                    tempCars.add(new Car(brand, carBody, fuelConsumption, price));
                 }
             }
+            if (noErrors) cars.addAll(tempCars);
+            else errorHandling(cars, scanner, amountOfCarsToGenerate);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Txt file not found: " + e);
+            errorHandling(cars, scanner, amountOfCarsToGenerate);
         }
+    }
+
+    private void errorHandling(List<Car> cars, Scanner scanner, int amountOfCarsToGenerate) {
+        System.err.println("Please try other options.");
+        new CarInputType(cars, scanner, amountOfCarsToGenerate);
     }
 
     public Brand getBrand(String line) {
@@ -51,9 +65,8 @@ public class CarImporterFromTxt implements DataGetterTxt {
             }
         }
         System.err.println("In " + fileName + " at line " + lineNumber
-                + " car doesn't have valid brand: " + brandValue
-                + ".\nCheck input file.");
-        System.exit(1);
+                + " car doesn't have valid brand: " + brandValue);
+        noErrors = false;
         return null;
     }
 
@@ -65,9 +78,8 @@ public class CarImporterFromTxt implements DataGetterTxt {
             }
         }
         System.err.println("In " + fileName + " at line " + lineNumber
-                + " car doesn't have valid car body: " + carBodyValue
-                + ".\nCheck input file.");
-        System.exit(1);
+                + " car doesn't have valid car body: " + carBodyValue);
+        noErrors = false;
         return null;
     }
 
@@ -80,10 +92,9 @@ public class CarImporterFromTxt implements DataGetterTxt {
             else throw new NumberFormatException();
         } catch (NumberFormatException e) {
             System.err.println("In " + fileName + " at line " + lineNumber
-                    + " car doesn't have valid fuel consumption: " + line
-                    + ".\nCheck input file.");
-            System.exit(1);
+                    + " car doesn't have valid fuel consumption: " + line);
         }
+        noErrors = false;
         return -1.0;
     }
 
@@ -92,10 +103,9 @@ public class CarImporterFromTxt implements DataGetterTxt {
             return Integer.valueOf(line.substring(line.indexOf("$") + 1, line.indexOf("]")));
         } catch (NumberFormatException e) {
             System.err.println("In " + fileName + " at line " + lineNumber
-                    + " car doesn't have valid price: " + line
-                    + ".\nCheck input file.");
-            System.exit(1);
+                    + " car doesn't have valid price: " + line);
         }
+        noErrors = false;
         return -1;
     }
 

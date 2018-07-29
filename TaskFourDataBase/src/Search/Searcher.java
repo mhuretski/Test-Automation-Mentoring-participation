@@ -35,4 +35,5 @@ public class Searcher {
     public List<Car> getChosenCars() {
         return chosenCars;
     }
+
 }

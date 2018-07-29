@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cars>
+	<car>
+		<brand>MERCEDES</brand>
+		<carBody>Wagon</carBody>
+		<fuelConsumption>10.5</fuelConsumption>
+		<price>12300</price>
+	</car>
+	<car>
+		<brand>BMW</brand>
+		<carBody>Sedan</carBody>
+		<fuelConsumption>7.9</fuelConsumption>
+		<price>17500</price>
+	</car>
+	<car>
+		<brand>BMW</brand>
+		<carBody>Van</carBody>
+		<fuelConsumption>8.4</fuelConsumption>
+		<price>13700</price>
+	</car>
+	<car>
+		<brand>AUDI</brand>
+		<carBody>Van</carBody>
+		<fuelConsumption>12.0</fuelConsumption>
+		<price>10800</price>
+	</car>
+</cars>
