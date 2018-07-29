@@ -4,7 +4,7 @@ import Garage.Brand;
 import Garage.Car;
 import Garage.CarBody;
 import Import.CarInputType;
-import Import.DataGetterFromStrings;
+import Import.CarSetter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -26,7 +26,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class CarImporterFromXml implements DataGetterFromStrings {
+public class CarImporterFromXml implements CarSetter {
+
+    private Brand brand;
+    private CarBody carBody;
+    private double fuelConsumption;
+    private int price;
 
     public CarImporterFromXml(List<Car> cars, Scanner scanner, int amountOfCarsToGenerate) {
         File schemaFile = new File("src/cars.xsd");
@@ -76,37 +81,54 @@ public class CarImporterFromXml implements DataGetterFromStrings {
             Node nNode = nList.item(temp);
             if (nNode.getNodeType() == Node.ELEMENT_NODE) {
                 Element eElement = (Element) nNode;
-                tempCars.add(new Car(
-                        getBrand(eElement.getElementsByTagName("brand").item(0).getTextContent()),
-                        getCarBody(eElement.getElementsByTagName("carBody").item(0).getTextContent()),
-                        getFuelConsumption(eElement.getElementsByTagName("fuelConsumption").item(0).getTextContent()),
-                        getPrice(eElement.getElementsByTagName("price").item(0).getTextContent())));
+                setBrand(eElement.getElementsByTagName("brand").item(0).getTextContent());
+                setCarBody(eElement.getElementsByTagName("carBody").item(0).getTextContent());
+                setFuelConsumption(eElement.getElementsByTagName("fuelConsumption").item(0).getTextContent());
+                setPrice(eElement.getElementsByTagName("price").item(0).getTextContent());
+
+                tempCars.add(new Car(getBrand(), getCarBody(), getFuelConsumption(), getPrice()));
             }
         }
         /*no validation required during parsing due to validation by XSD,
-        * in case there is an error during parsing, damaged data won't affect
-        * main list, data to main list is added after XML is completely parsed*/
+         * in case there is an error during parsing, damaged data won't affect main list,
+         * data to main list is added after XML is completely parsed*/
         cars.addAll(tempCars);
     }
 
-    @Override
-    public double getFuelConsumption(String data) {
-        return Double.valueOf(data);
+    private void setBrand(String data) {
+        brand = Brand.valueOf(data);
+    }
+
+    private void setCarBody(String data) {
+        carBody = CarBody.valueOf(data);
+    }
+
+    private void setFuelConsumption(String data) {
+        fuelConsumption = Double.valueOf(data);
+    }
+
+    private void setPrice(String data) {
+        price = Integer.valueOf(data);
     }
 
     @Override
-    public int getPrice(String data) {
-        return Integer.valueOf(data);
+    public Brand getBrand() {
+        return brand;
     }
 
     @Override
-    public Brand getBrand(String data) {
-        return Brand.valueOf(data);
+    public CarBody getCarBody() {
+        return carBody;
     }
 
     @Override
-    public CarBody getCarBody(String data) {
-        return CarBody.valueOf(data);
+    public double getFuelConsumption() {
+        return fuelConsumption;
+    }
+
+    @Override
+    public int getPrice() {
+        return price;
     }
 
 }

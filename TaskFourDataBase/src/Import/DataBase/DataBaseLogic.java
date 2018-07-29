@@ -5,6 +5,7 @@ import Garage.Brand;
 import Garage.Car;
 import Garage.CarBody;
 import Import.CarInputType;
+import Import.CarSetter;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -23,13 +24,17 @@ CREATE TABLE 'garage'.'cars' (
 PRIMARY KEY('id'));
 */
 
-public class DataBaseLogic implements DataGetterFromNumbers {
+public class DataBaseLogic implements CarSetter {
 
     private Connection connection;
     private PreparedStatement statement;
     private ResultSet resultSet;
     private boolean noErrorsGettingAmountOfRows = true;
     private boolean noErrorsReadingInfo = true;
+    private Brand brand;
+    private CarBody carBody;
+    private double fuelConsumption;
+    private int price;
 
     DataBaseLogic(Connection connection) {
         this.connection = connection;
@@ -66,10 +71,12 @@ public class DataBaseLogic implements DataGetterFromNumbers {
             statement.setInt(1, id);
             resultSet = statement.executeQuery();
             if (resultSet.next() && resultSet.getInt("ID") == id) {
-                car = new Car(getBrand(resultSet.getString("BRAND")),
-                        getCarBody(resultSet.getString("CAR_BODY")),
-                        getFuelConsumption(resultSet.getDouble("FUEL_CONSUMPTION")),
-                        getPrice(resultSet.getInt("PRICE")));
+                setBrand(resultSet.getString("BRAND"));
+                setCarBody(resultSet.getString("CAR_BODY"));
+                setFuelConsumption(resultSet.getDouble("FUEL_CONSUMPTION"));
+                setPrice(resultSet.getInt("PRICE"));
+
+                car = new Car(getBrand(),getCarBody(),getFuelConsumption(),getPrice());
             }
         } catch (SQLException e) {
             System.err.println("Error during reading table at line " + id + ": " + e.getMessage());
@@ -101,24 +108,40 @@ public class DataBaseLogic implements DataGetterFromNumbers {
         }
     }
 
-    @Override
-    public double getFuelConsumption(double data) {
-        return data;
+    private void setBrand(String data) {
+        brand = Brand.valueOf(data);
+    }
+
+    private void setCarBody(String data) {
+        carBody = CarBody.valueOf(data);
+    }
+
+    private void setFuelConsumption(double data) {
+        fuelConsumption = data;
+    }
+
+    private void setPrice(int data) {
+        price = data;
     }
 
     @Override
-    public int getPrice(int data) {
-        return data;
+    public Brand getBrand() {
+        return brand;
     }
 
     @Override
-    public Brand getBrand(String data) {
-        return Brand.valueOf(data);
+    public CarBody getCarBody() {
+        return carBody;
     }
 
     @Override
-    public CarBody getCarBody(String data) {
-        return CarBody.valueOf(data);
+    public double getFuelConsumption() {
+        return fuelConsumption;
+    }
+
+    @Override
+    public int getPrice() {
+        return price;
     }
 
 }
