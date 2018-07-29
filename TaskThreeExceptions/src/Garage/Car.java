@@ -10,16 +10,16 @@ public class Car extends Generator {
     private int price;
 
     public Car() {
-        setCar(Generator.random(Brand.values()),
-                Generator.random(CarBody.values()),
-                Generator.randFuelConsumption(),
-                Generator.randPrice());
+        setCar(random(Brand.values()),
+                random(CarBody.values()),
+                randFuelConsumption(),
+                randPrice());
     }
 
     public Car(String price){
-        setCar(Generator.random(Brand.values()),
-                Generator.random(CarBody.values()),
-                Generator.randFuelConsumption(),
+        setCar(random(Brand.values()),
+                random(CarBody.values()),
+                randFuelConsumption(),
                 Integer.valueOf(price));
     }
 

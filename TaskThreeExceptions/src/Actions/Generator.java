@@ -7,17 +7,17 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Generator {
 
-    protected static <T extends Enum> T random(T[] enumValues) {
+    protected <T extends Enum> T random(T[] enumValues) {
         return enumValues[new Random().nextInt(enumValues.length)];
     }
 
-    protected static double randFuelConsumption() {
+    protected double randFuelConsumption() {
         double fuelCons = ThreadLocalRandom.current().nextDouble(6, 16 + 1);
         fuelCons = new BigDecimal(fuelCons).setScale(1, RoundingMode.HALF_UP).doubleValue();
         return fuelCons;
     }
 
-    protected static int randPrice() {
+    protected int randPrice() {
         return ThreadLocalRandom.current().nextInt(70, 250 + 1) * 100;
     }
 
