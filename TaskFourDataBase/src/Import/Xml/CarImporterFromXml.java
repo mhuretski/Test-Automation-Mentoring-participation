@@ -36,6 +36,7 @@ public class CarImporterFromXml implements DataGetterFromStrings {
 
     private void getXmlData(File schemaFile, File xmlFile, List<Car> cars, Scanner scanner, int amountOfCarsToGenerate) {
         try {
+            /*methods are similar, so exceptions are thrown here*/
             validator(schemaFile, xmlFile);
             xmlParser(xmlFile, cars);
         } catch (ParserConfigurationException e) {
@@ -82,6 +83,9 @@ public class CarImporterFromXml implements DataGetterFromStrings {
                         getPrice(eElement.getElementsByTagName("price").item(0).getTextContent())));
             }
         }
+        /*no validation required during parsing due to validation by XSD,
+        * in case there is an error during parsing, damaged data won't affect
+        * main list, data to main list is added after XML is completely parsed*/
         cars.addAll(tempCars);
     }
 

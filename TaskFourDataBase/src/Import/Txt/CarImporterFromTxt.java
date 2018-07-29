@@ -44,6 +44,10 @@ public class CarImporterFromTxt implements DataGetterFromStrings {
                     tempCars.add(new Car(brand, carBody, fuelConsumption, price));
                 }
             }
+            /*getter return false if something goes wrong
+            * exception can't be thrown from getter because of common interface
+            * also all errors are tracked before going to errorHandling,
+            * if there are no errors data is added to main list*/
             if (noErrors) cars.addAll(tempCars);
             else errorHandling(cars, scanner, amountOfCarsToGenerate);
         } catch (IOException e) {
