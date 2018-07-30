@@ -13,6 +13,7 @@ public class Searcher {
     public Searcher(List<Car> cars, Scanner scanner) {
         TypeSearch ts = new TypeSearch();
         Show s = new Show();
+        s.whatToDo(cars, scanner);
         chosenCars = ts.chooseBrand(cars, scanner);
         amountOfCars();
         s.whatToDo(chosenCars, scanner);

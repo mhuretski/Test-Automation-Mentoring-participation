@@ -6,14 +6,15 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Show {
-    Show(List<Car> cars, Scanner scanner) {
-        whatToDo(cars, scanner);
-    }
-
-    public Show() {
-    }
 
     public void whatToDo(List<Car> cars, Scanner scanner) {
+        if (cars.size() != 0) chooseAction(cars, scanner);
+        else {
+            nothingToShow();
+        }
+    }
+
+    private void chooseAction(List<Car> cars, Scanner scanner) {
         System.out.println("Type \"show\" or \"skip\"");
         label:
         while (true) {
@@ -29,6 +30,11 @@ public class Show {
                     break;
             }
         }
+    }
+
+    private void nothingToShow() {
+        System.out.println("There are no cars to show. Bye!");
+        System.exit(0);
     }
 
     private void show(List<Car> cars) {

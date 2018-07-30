@@ -8,11 +8,9 @@ import java.util.Scanner;
 
 public class CarSorting implements Comparator<Car> {
 
-    public void sortedByFuelConsumption(List<Car> cars, Scanner scanner) {
+    public void sortedByFuelConsumption(List<Car> cars) {
         cars.sort(this);
         System.out.println("Cars are sorted by fuel consumption.");
-
-        new Show(cars, scanner);
     }
 
     @Override

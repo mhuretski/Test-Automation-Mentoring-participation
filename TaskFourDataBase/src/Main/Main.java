@@ -19,7 +19,7 @@ public class Main {
 
         new TotalCost(cars);
 
-        new CarSorting().sortedByFuelConsumption(cars, scanner);
+        new CarSorting().sortedByFuelConsumption(cars);
 
         cars = new Searcher(cars, scanner).getChosenCars();
         new CarExporter(cars);
