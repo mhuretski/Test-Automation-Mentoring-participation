@@ -9,9 +9,7 @@ public class Show {
 
     public void whatToDo(List<Car> cars, Scanner scanner) {
         if (cars.size() != 0) chooseAction(cars, scanner);
-        else {
-            nothingToShow();
-        }
+        else nothingToShow();
     }
 
     private void chooseAction(List<Car> cars, Scanner scanner) {
