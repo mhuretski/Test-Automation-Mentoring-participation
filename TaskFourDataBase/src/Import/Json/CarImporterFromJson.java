@@ -5,8 +5,7 @@ package Import.Json;
 import Garage.Brand;
 import Garage.Car;
 import Garage.CarBody;
-import Import.CarInputType;
-import Import.CarSetter;
+import Import.CarGetter;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -16,24 +15,17 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
-public class CarImporterFromJson implements CarSetter {
-
-    public CarImporterFromJson(List<Car> cars, Scanner scanner, int amountOfCarsToGenerate) {
-        parseJson();
-        if (noErrors) cars.addAll(tempCars);
-        else new CarInputType(cars, scanner, amountOfCarsToGenerate);
-    }
+public class CarImporterFromJson implements CarGetter {
 
     private int carSequenceInJson = 1;
-    private boolean noErrors = true;
+    private boolean isNoErrors = true;
     private String fileName = "src/cars.json";
     private List<Car> tempCars;
-    private Brand brand;
-    private CarBody carBody;
-    private double fuelConsumption;
-    private int price;
+
+    public CarImporterFromJson() {
+        parseJson();
+    }
 
     private void parseJson() {
         try {
@@ -44,12 +36,16 @@ public class CarImporterFromJson implements CarSetter {
             extractCars(cars);
         } catch (FileNotFoundException e) {
             System.out.println("Json file not found: " + e.getMessage());
+            isNoErrors = false;
         } catch (NullPointerException e) {
             System.out.println("Json file doesn't contain specified data at car " + carSequenceInJson);
+            isNoErrors = false;
         } catch (UnsupportedOperationException | IllegalStateException e) {
             System.err.println("Json contains unexpected data: " + e);
+            isNoErrors = false;
         } catch (com.google.gson.JsonSyntaxException e) {
             System.err.println("Failed to parse Json: " + e);
+            isNoErrors = false;
         }
     }
 
@@ -58,7 +54,7 @@ public class CarImporterFromJson implements CarSetter {
             return jsonObject.getAsJsonArray("cars");
         } catch (NullPointerException e) {
             System.out.println("Json file doesn't contain any cars.");
-            noErrors = false;
+            isNoErrors = false;
         }
         return null;
     }
@@ -67,98 +63,67 @@ public class CarImporterFromJson implements CarSetter {
         tempCars = new ArrayList<>();
         if (cars != null)
             for (int i = 0; i < cars.size(); i++, carSequenceInJson++) {
-                setBrand(cars.get(i).getAsJsonObject().get("brand").getAsString());
-                setCarBody(cars.get(i).getAsJsonObject().get("car_body").getAsString());
-                setFuelConsumption(cars.get(i).getAsJsonObject().get("fuel_consumption").getAsString());
-                setPrice(cars.get(i).getAsJsonObject().get("price").getAsString());
-
-                tempCars.add(new Car(getBrand(),
-                        getCarBody(),
-                        getFuelConsumption(),
-                        getPrice()));
+                tempCars.add(new Car(setBrand(cars.get(i).getAsJsonObject().get("brand").getAsString()),
+                        setCarBody(cars.get(i).getAsJsonObject().get("car_body").getAsString()),
+                        setFuelConsumption(cars.get(i).getAsJsonObject().get("fuel_consumption").getAsString()),
+                        setPrice(cars.get(i).getAsJsonObject().get("price").getAsString())));
             }
     }
 
-    private void setBrand(String data) {
-        boolean stop = false;
+    private Brand setBrand(String data) {
         for (Brand brand : Brand.values()) {
             if (data.equals(String.valueOf(brand))) {
-                this.brand = brand;
-                stop = true;
-                break;
+                return brand;
             }
         }
-        if (!stop) {
-            System.err.println("In " + fileName + " car " + carSequenceInJson
-                    + " doesn't have valid brand: " + data);
-            noErrors = false;
-        }
+        System.err.println("In " + fileName + " car " + carSequenceInJson
+                + " doesn't have valid brand: " + data);
+        isNoErrors = false;
+        return null;
     }
 
-    private void setCarBody(String data) {
-        boolean stop = false;
+    private CarBody setCarBody(String data) {
         for (CarBody carBody : CarBody.values()) {
             if (data.equals(String.valueOf(carBody))) {
-                this.carBody = carBody;
-                stop = true;
-                break;
+                return carBody;
             }
         }
-        if (!stop) {
-            System.err.println("In " + fileName + " car " + carSequenceInJson
-                    + " doesn't have valid car body: " + data);
-            noErrors = false;
-        }
+        System.err.println("In " + fileName + " car " + carSequenceInJson
+                + " doesn't have valid car body: " + data);
+        isNoErrors = false;
+        return null;
     }
 
-    private void setFuelConsumption(String data) {
-        boolean stop = false;
+    private double setFuelConsumption(String data) {
         if (data.matches("[0-9]+")
                 || data.matches("[0-9]+" + "." + "[0-9]+")) {
-            fuelConsumption = Double.valueOf(data);
-            stop = true;
+            return Double.valueOf(data);
         } else
             System.err.println("In " + fileName + " car " + carSequenceInJson
                     + " doesn't have valid fuel consumption: " + data);
-        if (!stop) {
-            noErrors = false;
-        }
+        isNoErrors = false;
+        return -1.0;
     }
 
-    private void setPrice(String data) {
-        boolean stop = false;
+    private int setPrice(String data) {
         try {
             int price = Integer.valueOf(data);
-            if (price >= 0) {
-                this.price = price;
-                stop = true;
-            } else throw new NumberFormatException();
+            if (price >= 0) return price;
+            else throw new NumberFormatException();
         } catch (NumberFormatException e) {
             System.err.println("In " + fileName + " car " + carSequenceInJson
                     + " doesn't have valid price: " + data);
         }
-        if (!stop) {
-            noErrors = false;
-        }
+        isNoErrors = false;
+        return -1;
     }
 
-    @Override
-    public Brand getBrand() {
-        return brand;
+    public List<Car> getCars() {
+        return tempCars;
     }
 
-    @Override
-    public CarBody getCarBody() {
-        return carBody;
+    public boolean isNoErrors() {
+        return isNoErrors;
     }
 
-    @Override
-    public double getFuelConsumption() {
-        return fuelConsumption;
-    }
-
-    @Override
-    public int getPrice() {
-        return price;
-    }
 }

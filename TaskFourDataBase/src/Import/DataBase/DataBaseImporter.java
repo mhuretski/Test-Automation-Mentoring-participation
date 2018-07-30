@@ -1,29 +1,25 @@
 package Import.DataBase;
 
 import Garage.Car;
-import Import.CarInputType;
+import Import.CarGetter;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 /*mysql-connector-java-8.0.11.jar is added to External Libraries*/
 
-public class DataBaseImporter {
+public class DataBaseImporter extends DataBaseLogic implements CarGetter {
 
     private Connection connection;
-    private boolean noErrors = true;
+    private List<Car> tempCars;
 
-    public DataBaseImporter(List<Car> cars, Scanner scanner, int amountOfCarsToGenerate) {
+    public DataBaseImporter() {
         connect();
-        if (noErrors) /*if there are no errors proceed to getting data from DB*/
-            getCars(new DataBaseLogic(connection), cars, scanner, amountOfCarsToGenerate);
-        disconnect(); /*data is gotten, so error during closing doesn't affect it*/
-        /*give user other options if there are errors during getting data from DB*/
-        if (!noErrors) new CarInputType(cars, scanner, amountOfCarsToGenerate);
+        if (isNoErrors) getCarsFromDB();
+        disconnect();
     }
 
     private void connect() {
@@ -34,28 +30,25 @@ public class DataBaseImporter {
             connection = DriverManager.getConnection(url, username, password);
         } catch (SQLException e) {
             System.err.println("No connection to database: " + e.getMessage());
-            System.err.println("Please try other options");
-            noErrors = false; /*if exception occurs track it to choose other options*/
+            isNoErrors = false;
         }
     }
 
-    private void getCars(DataBaseLogic reader, List<Car> cars, Scanner scanner, int amountOfCarsToGenerate) {
+    private void getCarsFromDB() {
         try {
-            List<Car> tempCars = new ArrayList<>();
+            tempCars = new ArrayList<>();
             if (connection != null) {
-                int lines = reader.getAmountOfAllLinesInTable(cars, scanner, amountOfCarsToGenerate);
+                int lines = getAmountOfAllLinesInTable(connection);
                 for (int i = 1; i <= lines; i++) {
-                    tempCars.add(reader.readInfo(i, cars, scanner, amountOfCarsToGenerate));
+                    readInfo(i, tempCars, connection);
                 }
             }
             for (Car car : tempCars) {
                 if (car == null) throw new NullPointerException();
             }
-            cars.addAll(tempCars); /*data is added to main list only if there are no errors*/
         } catch (NullPointerException e) {
             System.err.println("Cars in database contain null values.");
-            System.err.println("Please try other options");
-            noErrors = false; /*if exception occurs track it to choose other options*/
+            isNoErrors = false; /*if exception occurs track it to choose other options*/
         }
     }
 
@@ -64,7 +57,18 @@ public class DataBaseImporter {
             if (connection != null) connection.close();
         } catch (SQLException e) {
             System.err.println("Error during closing database connection " + e.getMessage());
+            /*this doesn't affect data so no error tracking, just notification*/
         }
+    }
+
+    @Override
+    public List<Car> getCars() {
+        return tempCars;
+    }
+
+    @Override
+    public boolean isNoErrors() {
+        return isNoErrors;
     }
 
 }

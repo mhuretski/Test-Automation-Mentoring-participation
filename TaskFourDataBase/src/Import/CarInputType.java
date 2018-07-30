@@ -17,6 +17,7 @@ public class CarInputType {
     }
 
     private void whatToDo(List<Car> cars, int amountOfCarsToGenerate, Scanner scanner) {
+        boolean isDone = true;
         System.out.println("In order to get cars type:\n" +
                 "1. \"generate\" to generate cars\n" +
                 "2. \"txt\" to get cars from txt file\n" +
@@ -28,25 +29,38 @@ public class CarInputType {
             String whatToDo = scanner.nextLine();
             switch (whatToDo.toLowerCase()) {
                 case "generate":
-                    new CarGenerator(cars, amountOfCarsToGenerate);
+                    CarGenerator gen = new CarGenerator(amountOfCarsToGenerate);
+                    cars.addAll(gen.getCars());
                     break label;
                 case "txt":
-                    new CarImporterFromTxt(cars, scanner, amountOfCarsToGenerate);
+                    CarImporterFromTxt txt = new CarImporterFromTxt();
+                    if (txt.isNoErrors()) cars.addAll(txt.getCars());
+                    else isDone = false;
                     break label;
                 case "xml":
-                    new CarImporterFromXml(cars, scanner, amountOfCarsToGenerate);
+                    CarImporterFromXml xml = new CarImporterFromXml();
+                    if (xml.isNoErrors()) cars.addAll(xml.getCars());
+                    else isDone = false;
                     break label;
                 case "json":
-                    new CarImporterFromJson(cars, scanner, amountOfCarsToGenerate);
+                    CarImporterFromJson json = new CarImporterFromJson();
+                    if (json.isNoErrors()) cars.addAll(json.getCars());
+                    else isDone = false;
                     break label;
                 case "database":
-                    new DataBaseImporter(cars, scanner, amountOfCarsToGenerate);
+                    DataBaseImporter db = new DataBaseImporter();
+                    if (db.isNoErrors()) cars.addAll(db.getCars());
+                    else isDone = false;
                     break label;
                 default:
                     System.out.println("Incorrect input: \"" + whatToDo + "\"");
                     System.out.println("Commands: \"generate\", \"txt\", \"xml\", \"json\", \"database\"");
                     break;
             }
+        }
+        if (!isDone) {
+            System.err.println("Try other options.");
+            whatToDo(cars, amountOfCarsToGenerate, scanner);
         }
     }
 

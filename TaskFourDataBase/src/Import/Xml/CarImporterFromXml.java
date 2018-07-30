@@ -3,8 +3,7 @@ package Import.Xml;
 import Garage.Brand;
 import Garage.Car;
 import Garage.CarBody;
-import Import.CarInputType;
-import Import.CarSetter;
+import Import.CarGetter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -24,41 +23,34 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
-public class CarImporterFromXml implements CarSetter {
+public class CarImporterFromXml implements CarGetter {
 
-    private Brand brand;
-    private CarBody carBody;
-    private double fuelConsumption;
-    private int price;
 
-    public CarImporterFromXml(List<Car> cars, Scanner scanner, int amountOfCarsToGenerate) {
+    private boolean isNoErrors = true;
+    private List<Car> tempCars;
+
+    public CarImporterFromXml() {
         File schemaFile = new File("src/cars.xsd");
         File xmlFile = new File("src/cars.xml");
-        getXmlData(schemaFile, xmlFile, cars, scanner, amountOfCarsToGenerate);
+        getXmlData(schemaFile, xmlFile);
     }
 
-    private void getXmlData(File schemaFile, File xmlFile, List<Car> cars, Scanner scanner, int amountOfCarsToGenerate) {
+    private void getXmlData(File schemaFile, File xmlFile) {
         try {
             /*methods are similar, so exceptions are thrown here*/
             validator(schemaFile, xmlFile);
-            xmlParser(xmlFile, cars);
+            xmlParser(xmlFile);
         } catch (ParserConfigurationException e) {
             System.err.println("Parsing failed: " + e);
-            errorHandling(cars, scanner, amountOfCarsToGenerate);
+            isNoErrors = false;
         } catch (SAXException e) {
             System.err.println("Validation failed: " + e);
-            errorHandling(cars, scanner, amountOfCarsToGenerate);
+            isNoErrors = false;
         } catch (IOException e) {
             System.err.println("XML or XSD file not found: " + e);
-            errorHandling(cars, scanner, amountOfCarsToGenerate);
+            isNoErrors = false;
         }
-    }
-
-    private void errorHandling(List<Car> cars, Scanner scanner, int amountOfCarsToGenerate) {
-        System.err.println("Please try other options.");
-        new CarInputType(cars, scanner, amountOfCarsToGenerate);
     }
 
     private void validator(File schemaFile, File xmlFile) throws SAXException, IOException {
@@ -69,66 +61,52 @@ public class CarImporterFromXml implements CarSetter {
         validator.validate(streamSource);
     }
 
-    private void xmlParser(File xmlFile, List<Car> cars)
+    private void xmlParser(File xmlFile)
             throws IOException, SAXException, ParserConfigurationException {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         Document doc = dBuilder.parse(xmlFile);
         doc.getDocumentElement().normalize();
         NodeList nList = doc.getElementsByTagName("car");
-        List<Car> tempCars = new ArrayList<>();
+        tempCars = new ArrayList<>();
         for (int temp = 0; temp < nList.getLength(); temp++) {
             Node nNode = nList.item(temp);
             if (nNode.getNodeType() == Node.ELEMENT_NODE) {
                 Element eElement = (Element) nNode;
-                setBrand(eElement.getElementsByTagName("brand").item(0).getTextContent());
-                setCarBody(eElement.getElementsByTagName("carBody").item(0).getTextContent());
-                setFuelConsumption(eElement.getElementsByTagName("fuelConsumption").item(0).getTextContent());
-                setPrice(eElement.getElementsByTagName("price").item(0).getTextContent());
-
-                tempCars.add(new Car(getBrand(), getCarBody(), getFuelConsumption(), getPrice()));
+                /*no validation required during parsing due to validation by XSD*/
+                tempCars.add(new Car(
+                        getBrand(eElement.getElementsByTagName("brand").item(0).getTextContent()),
+                        getCarBody(eElement.getElementsByTagName("carBody").item(0).getTextContent()),
+                        getFuelConsumption(eElement.getElementsByTagName("fuelConsumption").item(0).getTextContent()),
+                        getPrice(eElement.getElementsByTagName("price").item(0).getTextContent())));
             }
         }
-        /*no validation required during parsing due to validation by XSD,
-         * in case there is an error during parsing, damaged data won't affect main list,
-         * data to main list is added after XML is completely parsed*/
-        cars.addAll(tempCars);
     }
 
-    private void setBrand(String data) {
-        brand = Brand.valueOf(data);
+    private Brand getBrand(String data) {
+        return Brand.valueOf(data);
     }
 
-    private void setCarBody(String data) {
-        carBody = CarBody.valueOf(data);
+    private CarBody getCarBody(String data) {
+        return CarBody.valueOf(data);
     }
 
-    private void setFuelConsumption(String data) {
-        fuelConsumption = Double.valueOf(data);
+    private double getFuelConsumption(String data) {
+        return Double.valueOf(data);
     }
 
-    private void setPrice(String data) {
-        price = Integer.valueOf(data);
+    private int getPrice(String data) {
+        return Integer.valueOf(data);
     }
 
     @Override
-    public Brand getBrand() {
-        return brand;
+    public List<Car> getCars() {
+        return tempCars;
     }
 
     @Override
-    public CarBody getCarBody() {
-        return carBody;
-    }
-
-    @Override
-    public double getFuelConsumption() {
-        return fuelConsumption;
-    }
-
-    @Override
-    public int getPrice() {
-        return price;
+    public boolean isNoErrors() {
+        return isNoErrors;
     }
 
 }
