@@ -29,8 +29,7 @@ public class CarInputType {
             String whatToDo = scanner.nextLine();
             switch (whatToDo.toLowerCase()) {
                 case "generate":
-                    CarGenerator gen = new CarGenerator(amountOfCarsToGenerate);
-                    cars.addAll(gen.getCars());
+                    cars.addAll(new CarGenerator(amountOfCarsToGenerate).getCars());
                     break label;
                 case "txt":
                     CarImporterFromTxt txt = new CarImporterFromTxt();
